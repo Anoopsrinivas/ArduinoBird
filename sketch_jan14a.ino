@@ -17,11 +17,27 @@ int koniecEtap = 0;
 unsigned long zapamietanyCzas = 0;
 unsigned long zapamietanyCzas2 = 0;
 unsigned long zapamietanyCzas3 = 0;
+unsigned long zapamietanyCzas4 = 0;
 unsigned long roznicaCzasu = 0;
 unsigned long roznicaCzasu2 = 0;
 unsigned long roznicaCzasu3 = 0;
+unsigned long roznicaCzasu4 = 0;
+
 byte gameOver[8];
 byte gra[8];
+
+byte zero[8] = {0, 0, 60, 66, 66, 60, 0, 0};
+byte jeden[8] = {0, 0, 0, 126, 32, 0, 0, 0};
+byte dwa[8]={0, 0, 114, 82, 82, 94, 0, 0};
+byte trzy[8] = {0, 0, 126, 82, 82, 82, 0, 0};
+byte cztery[8] = {0, 0, 126, 16, 16, 112, 0, 0};
+byte piec[8] = {0, 0, 94, 82, 82, 114, 0, 0};
+byte szesc[8] = {0, 0, 94, 82, 82, 126, 0, 0};
+byte siedem[8] = {0, 0, 96, 94, 64, 64, 0, 0};
+byte osiem[8] = {0, 0, 126, 82, 82, 126, 0, 0};
+byte dziewiec[8] = {0, 0, 126, 82, 82, 114, 0, 0};
+byte wiecej[8] = {16, 56, 16, 0, 126, 82, 82, 114};
+
 LedControl lc = LedControl(DIN,CLK,CS,0);
 
 void setup() 
@@ -46,11 +62,17 @@ void loop()
   //  Serial.println("in");
   //}  
 
-  Serial.print("Wysokosc gracza: ");
-  Serial.println(wysokoscGracza);
+  //Serial.print("Wysokosc gracza: ");
+  //Serial.println(wysokoscGracza);
 
-  Serial.print("Pozycja gracza: ");
-  Serial.println(pozycjaGracza);    
+  //Serial.print("Pozycja gracza: ");
+  //Serial.println(pozycjaGracza);
+
+  //Serial.print("Przeszkoda: ");
+  //Serial.println(przeszkoda);
+
+  Serial.print("Wyswietlacz: ");
+  Serial.println(gra[6]);
   
   pozycjaGracza = lround(pow(2,wysokoscGracza));
 
@@ -122,7 +144,7 @@ void loop()
           }
         break;
         case 2:
-          if(gra[6]!=249 && gra[6]!=160 && gra[6]!=144)
+          if(gra[6]!=159 && gra[6]!=207 && gra[6]!=175)
           {
             over=true;
           }
@@ -173,6 +195,7 @@ void loop()
         if(pozycjaPrzeszkody>7)
         {
           przeszkoda=random(4);
+          wynik+=1;
           pozycjaPrzeszkody=0;        
         }
       }      
@@ -197,11 +220,26 @@ void loop()
     {
       in=false;
     }
+
+    roznicaCzasu4=0;
+    zapamietanyCzas4=0;
+    koniecEtap=0;
   }
   else
   {
-    if(koniecEtap==0)
+    if(koniecEtap!=1)
     {
+      roznicaCzasu4 = czas - zapamietanyCzas4;
+
+      if(roznicaCzasu4 >= 5000)
+      {
+        zapamietanyCzas4 = czas;      
+        koniecEtap+=1;
+      }
+    }
+    
+    if(koniecEtap==0)
+    {      
       gameOver[0]=129;
       gameOver[1]=66;
       gameOver[2]=36;
@@ -214,17 +252,52 @@ void loop()
     }
     if(koniecEtap==1)
     {
-      printByte(koniecWynik);
-    }
-    if(koniecEtap==2)
-    {
-      printByte(go);
+      switch(wynik)
+      {
+        case 0:
+          printByte(zero);
+        break;
+        case 1:
+          printByte(jeden);
+        break;
+        case 2:
+          printByte(dwa);
+        break;
+        case 3:
+          printByte(trzy);
+        break;
+        case 4:
+          printByte(cztery);
+        break;
+        case 5:
+          printByte(piec);
+        break;
+        case 6:
+          printByte(szesc);
+        break;
+        case 7:
+          printByte(siedem);
+        break;
+        case 8:
+          printByte(osiem);
+        break;
+        case 9:
+          printByte(dziewiec);
+        break;
+        default:
+          printByte(wiecej);
+        break;
+      }
+
       if(digitalRead(9)==LOW)
       {
         pozycjaGracza=4;
         wysokoscGracza=6;
         przyspieszenie=500;
-        pozycjaPrzeszkody=0;
+        pozycjaPrzeszkody=0;        
+        wynik=0;
+        przeszkoda=random(4);
+        czas=0;
         over=false;
       }
     }
