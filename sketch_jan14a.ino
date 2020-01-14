@@ -4,6 +4,7 @@ int DIN = 12;
 int CS =  11;
 int CLK = 10;
 int pozycjaPrzeszkody = 0;
+int przyspieszenie = 500;
 int pozycjaGracza = 4;
 unsigned long czas = 0;
 int wysokoscGracza = 6;
@@ -11,8 +12,14 @@ int wysokoscPrzeszkody[4]={199,227,143,241};
 int przeszkoda=0;
 bool over = false;
 bool in = false;
+int wynik = 0;
+int koniecEtap = 0;
 unsigned long zapamietanyCzas = 0;
+unsigned long zapamietanyCzas2 = 0;
+unsigned long zapamietanyCzas3 = 0;
 unsigned long roznicaCzasu = 0;
+unsigned long roznicaCzasu2 = 0;
+unsigned long roznicaCzasu3 = 0;
 byte gameOver[8];
 byte gra[8];
 LedControl lc = LedControl(DIN,CLK,CS,0);
@@ -48,11 +55,9 @@ void loop()
   pozycjaGracza = lround(pow(2,wysokoscGracza));
 
   if(!over)
-  {
-    //byte gra[8] = {0,0,0,0,0,0,pozycjaGracza,0};
+  {    
     if(pozycjaPrzeszkody==0)
     {
-      //if(
       gra[0]=wysokoscPrzeszkody[przeszkoda];
     }
     else
@@ -100,8 +105,35 @@ void loop()
       gra[5]=1;
     }
     if(pozycjaPrzeszkody==6)
-    {
+    {      
       gra[6]=wysokoscPrzeszkody[przeszkoda]+pozycjaGracza;
+      switch(przeszkoda)
+      {
+        case 0:
+          if(gra[6]!=231 && gra[6]!=215 && gra[6]!=207)
+          {
+            over=true;
+          }
+        break;
+        case 1:
+          if(gra[6]!=243 && gra[6]!=235 && gra[6]!=231)
+          {
+            over=true;
+          }
+        break;
+        case 2:
+          if(gra[6]!=249 && gra[6]!=160 && gra[6]!=144)
+          {
+            over=true;
+          }
+        break;
+        case 3:
+          if(gra[6]!=249 && gra[6]!=245 && gra[6]!=243)
+          {
+            over=true;
+          }
+        break;
+      }
     }
     else
     {
@@ -123,21 +155,39 @@ void loop()
     }
 
     roznicaCzasu = czas - zapamietanyCzas;
-    if (roznicaCzasu >= 500UL)
+    roznicaCzasu2 = czas - zapamietanyCzas2;
+    roznicaCzasu3 = czas - zapamietanyCzas3;
+
+    if(roznicaCzasu2 >= 6000 && przyspieszenie>100)
+    {
+      zapamietanyCzas2 = czas;
+      przyspieszenie-=100;
+    }
+    
+    if (roznicaCzasu >= przyspieszenie)
     {
       zapamietanyCzas = czas;
       if(wysokoscGracza>0)
-      {
-        wysokoscGracza-=1;
+      {        
         pozycjaPrzeszkody+=1;
         if(pozycjaPrzeszkody>7)
         {
           przeszkoda=random(4);
           pozycjaPrzeszkody=0;        
         }
+      }      
+    }
+
+    if(roznicaCzasu3 >= 500)
+    {
+      zapamietanyCzas3=czas;
+      if(wysokoscGracza>0)
+      {
+        wysokoscGracza-=1;
       }
     }
-    if(digitalRead(9)==LOW && in==false)
+    
+    if(digitalRead(9)==LOW && in==false && wysokoscGracza<7)
     {
       wysokoscGracza+=1;      
       in=true;
@@ -150,22 +200,33 @@ void loop()
   }
   else
   {
-    //byte gameOver[8] = {129,66,36,24,24,36,66,129};
-    gameOver[0]=129;
-    gameOver[1]=66;
-    gameOver[2]=36;
-    gameOver[3]=24;
-    gameOver[4]=24;
-    gameOver[5]=36;
-    gameOver[6]=66;
-    gameOver[7]=129;
-    printByte(gameOver);
-
-    if(digitalRead(9)==LOW)
+    if(koniecEtap==0)
     {
-      pozycjaGracza=4;
-      wysokoscGracza=6;
-      over=false;
+      gameOver[0]=129;
+      gameOver[1]=66;
+      gameOver[2]=36;
+      gameOver[3]=24;
+      gameOver[4]=24;
+      gameOver[5]=36;
+      gameOver[6]=66;
+      gameOver[7]=129;
+      printByte(gameOver);      
+    }
+    if(koniecEtap==1)
+    {
+      printByte(koniecWynik);
+    }
+    if(koniecEtap==2)
+    {
+      printByte(go);
+      if(digitalRead(9)==LOW)
+      {
+        pozycjaGracza=4;
+        wysokoscGracza=6;
+        przyspieszenie=500;
+        pozycjaPrzeszkody=0;
+        over=false;
+      }
     }
   }  
 }
