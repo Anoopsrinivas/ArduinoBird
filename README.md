@@ -3,6 +3,8 @@ School project - Flappy Bird clone made for Arduino using 8x8 matrix display wit
 
 Probably not a good practice, but variables names etc. I wrote mostly in Polish, so be aware of that.
 
+![](arduinobird.gif)
+
 Components used:
 - Arduino Uno R2
 - 8x8 Matrix Display with MAX7219
