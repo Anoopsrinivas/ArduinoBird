@@ -1,9 +1,9 @@
 # ArduinoBird
 School project - Flappy Bird clone made for Arduino using 8x8 matrix display with MAX7219, one button and LedControl library.
 
-Probably not a good practice, but variables names etc. I wrote mostly in Polish, so be aware of that.
-
 ![](arduinobird.gif)
+
+Probably not a good practice, but variables names etc. I wrote mostly in Polish, so be aware of that.
 
 Components used:
 - Arduino Uno R2
