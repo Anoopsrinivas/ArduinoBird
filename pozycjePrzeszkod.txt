@@ -1,4 +1,0 @@
-przeszkoda1 (199): 231/215/207
-przeszkoda2 (227): 243/235/231
-przeszkoda3 (143): 207/160/144
-przeszkoda4 (241): 249/245/243
